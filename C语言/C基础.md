@@ -34,3 +34,33 @@
 > msg和&msg打印的都是函数的地址    
 > 函数指针可以直接在函数的参数中定义，实现函数中传递函数
 
+    #include <math.h>
+    #include <time.h>
+    int* getMinPointer(int ids[], int len){
+        int i = 0; 	
+        int* p = &ids[0];
+        for (; i < len; i++){
+            if (ids[i] < *p){			
+                p = &ids[i];
+            }
+        }
+        return p;
+    }
+
+    void main(){
+        int ids[10];
+        int i = 0;
+        //初始化随机数发生器，设置种子，种子不一样，随机数才不一样
+        //当前时间作为种子 有符号 int -xx - > +xx
+        srand((unsigned)time(NULL));
+        for (; i < 10; i++){
+            //100范围内
+            ids[i] = rand() % 100;
+            printf("%d\n", ids[i]);
+        }
+
+        int* p = getMinPointer(ids, sizeof(ids) / sizeof(int));
+        printf("%#x,%d\n",p,*p);
+        getchar();
+    }
+
