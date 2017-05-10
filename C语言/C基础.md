@@ -142,6 +142,34 @@
 
         int* p1 = malloc(1024*10*sizeof(int));
         // 如果不释放就重新分配就会内存泄漏 free(p1);
+        // 这里如果调用了free已经释放了，但p1仍然有值，并不为NULL
+        // p1 = NULL;
         p1 = malloc(1024*10*sizeof(int)*2);
         free(p1);
+        p1 = NULL;
 
+### 字符串
+1. 字符数组存储字符串        
+
+        // 几种写法，0为结束标记
+        char str[] = {'c','h','i','\0'};
+        char str[4] = {'c','h','i'};
+        char str[10] = "china";
+        // 可修改
+        str[0] = 'a';
+        printf("%s\n",str);// 字符串
+        printf("%#x\n",str);// 首地址
+
+2. 通过字符指针
+
+        char* str = "how are you";
+        // 此时str不能修改
+        // str[0] = 'w'; 错误
+        printf("%s\n", str);
+        printf("%#x\n",str);
+
+        str+=3;
+        while(*str){
+            printf("%c", *str);
+            str++;
+        }
