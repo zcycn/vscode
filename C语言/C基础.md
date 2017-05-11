@@ -173,3 +173,117 @@
             printf("%c", *str);
             str++;
         }
+
+### 结构体
+1. 结构体初始化
+
+        struct Man{
+            char* name;
+            int age;
+        };
+
+        void main(){
+            // struct Man m1 = {"jack", 20};
+            struct Man m1;
+            m1.age = 23;
+            m1.name = "rose"
+        }       
+
+2. 结构体的几种写法         
+
+        struct Man{
+            char name[20];
+            int age;
+        }m1, m2 = {"jack", 20};// 结构体变量名
+
+        // main中使用
+        strcpy(m1.name, "jack");// 这里不是指针所以用字符串方法赋值        
+
+    匿名结构体
+
+        // 控制结构体个数
+        struct{
+            char name[20];
+            int age;
+        }m1, m2;// 不取变量没法用，变量可以多个，相当于单例     
+
+    结构体嵌套
+
+        struct Teacher{
+            char name[20];
+        };
+
+        struct Student{
+            char name[20];
+            int age;
+            struct Teacher t;
+        };
+
+        // 或者这样定义也可以
+        struct Student{
+            int age;
+            struct Teacher{
+                char name[20];
+            }t;
+        };
+
+        // main中使用
+        struct Student s1 = {"jack", 20, {"jason"}};
+
+        struct Student s1;
+        s1.age = 10;
+        strcpy(s1.t.name, "jason");
+
+3. 结构体指针    
+
+        struct Man{
+            char name[20];
+            int age;
+        };
+
+        struct Man m1 = {"ack", 20};
+        struct Man* p = &m1;
+
+        // p->name p->age (*p).name 的简写
+
+4. 结构体数组
+
+        struct Man mans[] = {{"ack", 20}, {"ack", 20}};  
+        // 遍历数组
+        struct Man* p = mans;
+        for(;p<mans+(sizeof(mans)/sizeof(struct Man)));p++){
+            printf("%s,%d\n", p->name, p->age);
+        }      
+
+5. 结构体大小
+
+        最宽基本类型的整数倍，就是会字节对齐，方便读取效率
+        struct Man{
+            int age;// 4字节
+            double weight;// 8字节
+        };        
+        结构体大小为16字节而不是12字节
+
+### 结构体动态内存分配
+
+    struct Man{
+        char* name;
+        int age;
+    };
+    struct Man* man_p = (struct Man*)malloc(sizeof(struct Man)*10);   
+    struct Man* p = man_p;
+    p->name = "jack";
+    p->age=10;
+    p++;
+    p->name = "jack";
+    p->age=10;        
+
+    struct Man* loop_p = man_p;
+    for(; loop_p<man_p+2;loop_p++){
+        printf("%s,%d\n", loop_p->name, loop_p->age);
+    }
+
+    free(man_p);
+    man_p = NULL;
+
+    
