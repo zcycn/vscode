@@ -286,4 +286,41 @@
     free(man_p);
     man_p = NULL;
 
-    
+### typedef别名
+    代表不同情况显示不同名称，书写简洁           
+    typedef int Age;// int 类型别名     
+    typedef int* Ap;// 指针类型别名   
+
+1. 结构体别名    
+
+        typedef struct Man* JM;// 结构体指针别名   
+
+        // 结构体前加typedef表示别名，这是一种简写
+        typedef struct Woman{
+            char name[20];
+            int age;
+        }W , *WP;// 这两个都是别名
+
+        W w1 = {"rose", 20};
+        WP wp1 = &w1;
+        printf("%s,%d", wp1->name, wp1->age);
+
+        // 结构体函数指针成员
+        struct Girl{
+            char name[20];
+            int age;
+            void(*sayHi)(char*);
+        }Girl;// 定义的结构体别名与结构体名称相同可以省写struct
+
+        typedef Girl* GirlP;//通过别名再定义结构体指针别名
+
+        void sayHi(char* text){
+            MessageBox(0,"hello","title", 0);
+        }
+
+        void main(){
+            struct Girl gl;
+            gl.name = "lucy";
+            g1.sayHi = sayHi;
+            GirlP gp1 = &g1;// 结构体指针的作用是可以在方法间传递
+        }
