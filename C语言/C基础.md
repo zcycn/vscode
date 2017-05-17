@@ -306,7 +306,7 @@
         printf("%s,%d", wp1->name, wp1->age);
 
         // 结构体函数指针成员
-        struct Girl{
+        typedef struct Girl{
             char name[20];
             int age;
             void(*sayHi)(char*);
@@ -320,7 +320,88 @@
 
         void main(){
             struct Girl gl;
-            gl.name = "lucy";
+            gl.name = "lucy";// 数组不能直接赋值，这里省写
             g1.sayHi = sayHi;
             GirlP gp1 = &g1;// 结构体指针的作用是可以在方法间传递
         }
+
+        // 字符数组只能在声明时这样赋值，否则用strcpy函数赋值
+        // 相比字符指针而言的好处就是可以修改
+        char a[10] = "happy";
+        strcpy(a, "baby");
+        // 字符指针不能修改，但可以多次赋值
+        char *b = "Friend";
+        b = "Family";
+        
+        结构体如果定义了多个变量，那么变量间数据是独立的，不能相互取值
+
+### 联合体        
+
+不同类型的变量共同占用一段内存     
+大小就是最大的成员所占的字节数     
+
+    union Data{
+        int x;
+        int y;
+        double z;
+    };
+
+    union Data d1;
+    d1.x = 90;
+    d1.y = 100;
+    d1.z = 23.8;
+
+### 枚举
+
+    enum Day{
+        Monday,
+        Tuesday,
+        Wednesday
+    };
+
+    相当于
+
+    enum Day{
+        Monday = 0,
+        Tuesday = 1,
+        Wednesday = 2
+    };
+
+    enum Day d = Monday;
+
+### IO
+
+    // 读
+    char path[] = "E:\\text.txt";
+    FILE *fp = fopen(path, "r");    
+    if(fp == NULL){
+        printf("文件打开失败");
+        return;
+    }
+    char buff[50];
+    while(fgets(buff, 50, fp)){
+        printf("%s", buff);
+    }
+    fclose(fp);
+
+    // 写
+    char *text = "hello";
+    fputs(text, fp);
+    fclose(fp);
+
+二进制文件
+
+> 读写文本文件和二进制文件的区别是回车换行符
+> 写文本时，\n会转成\r\n
+> 读文本时，\r\n会转换成\n
+
+    // b表示操作二进制文件
+    FILE *read = fopen(r_path, "rb");
+    FILE *write = fopen(w_path, "wb");
+    int buff[50];
+    int len = 0;
+    while((len = fread(buff, sizeof(int)), 50, read) != 0){
+        fwrite(buff, sizeof(int), len, write);
+    }
+    fclose(read);
+    fclose(write);
