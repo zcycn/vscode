@@ -405,3 +405,85 @@
     }
     fclose(read);
     fclose(write);
+
+获取文件大小
+
+    char *path = "E:\\text.txt";
+    FILE *p = fopen(path, "r");
+    // 重新定位文件指针 SEEK_END 文件末尾 0表示文件末尾偏移量
+    fseek(fp, 0, SEEK_END);
+    // 返回当前文件指针相对于文件开头的位移量 单位是字节
+    long filesize = ftell(fp);
+
+文本文件加密解密
+
+    // 加密
+    void crypt(char normal_path[], char crypt_path[]){
+        FILE *normal_fp = fopen(normal_path, "r");
+        FILE *crypt_fp = fopen(crypt_path,"w");
+
+        // 一次读一个字符
+        int ch;
+        while((ch = fgetc(normal_fp))!=EOF){
+            // 异或加密 1^1=0 0^0=0 相同为0，不同为1，异或两次就还原了
+            fputc(ch^9,crypt_fp);// 写入
+        }
+
+        fclose(crypt_fp);
+        fclose(normal_fp);
+    }    
+
+    // 解密
+    void decrypt(char crypt_path[], char normal_path[]){
+        FILE *normal_fp = fopen(crypt_path, "r");
+        FILE *crypt_fp = fopen(normal_path,"w");
+
+        // 一次读一个字符
+        int ch;
+        while((ch = fgetc(crypt_path))!=EOF){
+            // 异或加密 1^1=0 0^0=0 相同为0，不同为1，异或两次就还原了
+            fputc(ch^9,normal_path);// 写入
+        }
+
+        fclose(crypt_fp);
+        fclose(normal_fp);
+    }   
+
+二进制文件加密解密
+
+    // 密码 123456
+    // 加密
+    void crypt(char normal_path[], char crypt_path[], char password[]){
+        FILE *normal_fp = fopen(normal_path, "rb");
+        FILE *crypt_fp = fopen(crypt_path,"wb");
+
+        int ch;
+        int i = 0;
+        int pwd_len = strlen(password);// 密码长度
+        while((ch = fgetc(normal_fp))!=EOF){
+            // 异或加密 1^1=0 0^0=0 相同为0，不同为1，异或两次就还原了
+            fputc(ch^password[i%pwd_len],crypt_fp);// 写入
+            i++;
+        }
+
+        fclose(crypt_fp);
+        fclose(normal_fp);
+    }    
+
+    // 解密
+    void decrypt(char crypt_path[], char normal_path[], char password[]){
+        FILE *normal_fp = fopen(crypt_path, "rb");
+        FILE *crypt_fp = fopen(normal_path,"wb");
+
+        int ch;
+        int i = 0;
+        int pwd_len = strlen(password);// 密码长度
+        while((ch = fgetc(crypt_path))!=EOF){
+            // 异或加密 1^1=0 0^0=0 相同为0，不同为1，异或两次就还原了
+            fputc(ch^password[i%pwd_len],normal_path);// 写入
+            i++;
+        }
+
+        fclose(crypt_fp);
+        fclose(normal_fp);
+    }       
