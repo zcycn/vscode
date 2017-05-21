@@ -128,7 +128,7 @@ Android中日志输出
 
 6. 配置dll文件环境变量
 
-    新配置的环境变量，需要重启Eclipse
+    新配置的环境变量，需要重启Eclipse，或拷贝到工程根目录下
     ![jni_7.png](img/jni_7.png)    
 
 7. 调用native方法，运行
@@ -185,5 +185,84 @@ c中需要用到自身，那么传递结构体的指针，那么接收这个指�
         (*env)->NewStringUTF(env, "abc");
         
         system("pause");
+    }
+
+- jclass
+
+代表native方法所属类的class对象
+
+- jobject
+
+native方法是非静态方法，native方法所属的对象
+
+	public native static String getStringFromC();
+	public native String getString2FromC();
+
+    JNIEXPORT jstring JNICALL Java_com_zcycn_jni_JniTest_getStringFromC
+    (JNIEnv *env, jclass jcls) {
+        // c字符串转java字符串
+        return (*env)->NewStringUTF(env, "C String");
+    }
+
+    JNIEXPORT jstring JNICALL Java_com_zcycn_jni_JniTest_getString2FromC
+    (JNIEnv *env, jobject jobj) {
+        return (*env)->NewStringUTF(env, "C String");
+    }
+
+### jni数据类型
+
+修改java属性值
+
+    JNIEXPORT jstring JNICALL Java_com_zcycn_jni_JniTest_accessField
+    (JNIEnv *env, jobject jobj) {
+        // 获取jclass
+        jclass cls = (*env)->GetObjectClass(env, jobj);
+        // 获取属性ID	属性名称	属性签名	object	就是L开头加类名分号
+        jfieldID fid = (*env)->GetFieldID(env, cls, "key", "Ljava/lang/String;");
+        // 获取属性值
+        jstring jstr = (*env)->GetObjectField(env, jobj, fid);
+        // jstring转c字符串 isCopy是否复制 JNI_FALSE
+        char *c_str = (*env)->GetStringUTFChars(env, jstr,NULL);
+        char text[20] = "super ";
+        strcat(text, c_str);
+        // c字符串转jstring
+        jstring new_jstr = (*env)->NewStringUTF(env, text);
+        // 修改key
+        (*env)->SetObjectField(env, jobj, fid, new_jstr);
+
+        return new_jstr;
+    }
+
+    package com.zcycn.jni;
+
+    public class JniTest {
+
+        public native static String getStringFromC();
+        
+        public native String getString2FromC();
+        
+        public String key = "hello";
+        
+        /**
+        * 返回修改后的属性内容
+        * @return
+        */
+        public native String accessField();
+        
+        public static void main(String[] args) {
+            System.out.println(getStringFromC());
+            
+            JniTest j = new JniTest();
+            System.out.println(j.getString2FromC());
+            System.out.println("key:修改前："+j.key);
+            System.out.println(j.accessField());
+            System.out.println("key:修改后："+j.key);
+        }
+        
+        // 加载动态库
+        static{
+            System.loadLibrary("jni_study");
+        }
+        
     }
 
