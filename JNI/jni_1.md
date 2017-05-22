@@ -266,3 +266,138 @@ native方法是非静态方法，native方法所属的对象
         
     }
 
+修改java静态属性
+
+    JNIEXPORT void JNICALL Java_com_zcycn_jni_JniTest_accessStaticField
+    (JNIEnv *env, jobject jobj) {
+        jclass cls = (*env)->GetObjectClass(env, jobj);
+        jfieldID fid = (*env)->GetStaticFieldID(env, cls, "count", "I");
+        jint count = (*env)->GetStaticIntField(env, cls, fid);
+        count++;
+        // 修改
+        (*env)->SetStaticIntField(env, cls, fid, count);
+    }
+
+    package com.zcycn.jni;
+
+    public class JniTest {
+
+        public static int count = 9;
+        
+        public native void accessStaticField();
+        
+        public static void main(String[] args) {
+            System.out.println("count修改前："+count);
+            j.accessStaticField();
+            System.out.println("count修改后："+count);
+        }
+        
+        // 加载动态库
+        static{
+            System.loadLibrary("jni_study");
+        }
+        
+    }    
+
+调用java方法
+
+    JNIEXPORT void JNICALL Java_com_zcycn_jni_JniTest_accessMethod
+    (JNIEnv *env, jobject jobj) {
+        jclass cls = (*env)->GetObjectClass(env, jobj);
+        //在java项目的bin目录下运行javap -s -p 完整类名		就可显示全部方法签名
+        jmethodID mid = (*env)->GetMethodID(env, cls, "getRandomInt", "(I)I");
+        // 调用	后面为可变参数，由方法的参数个数决定
+        jint random = (*env)->CallIntMethod(env, jobj, mid, 200);
+        printf("random num:%ld", random);
+    }    
+
+调用java静态方法
+
+    JNIEXPORT void JNICALL Java_com_zcycn_jni_JniTest_accessStaticMethod
+    (JNIEnv *env, jobject jobj) {
+        jclass cls = (*env)->GetObjectClass(env, jobj);
+        jmethodID mid = (*env)->GetStaticMethodID(env, cls, "getUUID", "()Ljava/lang/String;");
+        // 调用
+        jstring uuid = (*env)->CallStaticObjectMethod(env, cls, mid);
+
+        // 生成随机文件名称  JNI_FALSE c与java执行的同一字符串
+        char *uuid_str = (*env)->GetStringUTFChars(env, uuid, JNI_FALSE);
+        char filename[100];
+        sprintf(filename, "D://%s.txt", uuid_str);
+        FILE *fp = fopen(filename, "w");
+        fputs("i love json", fp);
+        fclose(fp);
+    }    
+
+共用的java类
+
+    package com.zcycn.jni;
+
+    import java.util.Random;
+    import java.util.UUID;
+
+    public class JniTest {
+
+        public native static String getStringFromC();
+        
+        public native String getString2FromC();
+        
+        public String key = "hello";
+        
+        /**
+        * 返回修改后的属性内容
+        * @return
+        */
+        public native String accessField();
+        
+        public static int count = 9;
+        
+        public native void accessStaticField();
+        
+        public native void accessMethod();
+        
+        public native void accessStaticMethod();
+        
+        public static void main(String[] args) {
+            System.out.println(getStringFromC());
+            
+            JniTest j = new JniTest();
+            System.out.println(j.getString2FromC());
+            System.out.println("key:修改前："+j.key);
+            System.out.println(j.accessField());
+            System.out.println("key:修改后："+j.key);
+            
+            System.out.println("count修改前："+count);
+            j.accessStaticField();
+            System.out.println("count修改后："+count);
+            
+            j.accessMethod();
+            
+            j.accessStaticMethod();
+        }
+        
+        /**
+        * 获取一个设置最大值的随机数
+        * @param max
+        * @return
+        */
+        public int getRandomInt(int max){
+            System.out.println("getRandomInt");
+            return new Random().nextInt(max);
+        }
+        
+        /**
+        * 获取UUID
+        * @return
+        */
+        public static String getUUID(){
+            return UUID.randomUUID().toString();
+        }
+        
+        
+        // 加载动态库
+        static{
+            System.loadLibrary("jni_study");
+        }
+        
+    }    
