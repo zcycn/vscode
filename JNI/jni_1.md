@@ -547,3 +547,45 @@ native方法是非静态方法，native方法所属的对象
         }
         
     }    
+
+    // 参考http://ironurbane.iteye.com/blog/425513
+    // 以上乱码可以下方法，当然是window平台
+    char* jstringToWindows(JNIEnv *env, jstring jstr)
+    {
+        int length = (*env)->GetStringLength(env, jstr);
+        const jchar* jcstr = (*env)->GetStringChars(env, jstr, 0);
+        char* rtn = (char*)malloc(length * 2 + 1);
+        int size = 0;
+        size = WideCharToMultiByte(CP_ACP, 0, (LPCWSTR)jcstr, length, rtn, (length * 2 + 1), NULL, NULL);
+        if (size <= 0)
+            return NULL;
+        (*env)->ReleaseStringChars(env, jstr, jcstr);
+        rtn[size] = 0;
+        return rtn;
+    }
+
+    // 传入中文
+    JNIEXPORT jstring JNICALL Java_com_zcycn_jni_JniTest_chineseChars
+    (JNIEnv *env, jobject jobj, jstring in) {
+        char * recvtest = jstringToWindows(env, in);
+        // char *c_str = (*env)->GetStringUTFChars(env, in, JNI_FALSE);
+        printf("%s\n", recvtest);// 这里会由乱码
+
+        char *cstr = "你好啊";
+        //jstring jstr = (*env)->NewStringUTF(env, cstr);
+
+        // 避免乱码
+        jclass str_cls = (*env)->FindClass(env, "java/lang/String");
+        jmethodID constructor_mid = (*env)->GetMethodID(env, str_cls, "<init>", "([BLjava/lang/String;)V");
+        
+        // jbyte -> char  复制数据到bytes jbyteArray -> char[]
+        jbyteArray bytes = (*env)->NewByteArray(env, strlen(cstr));
+        (*env)->SetByteArrayRegion(env, bytes, 0, strlen(cstr), cstr);
+
+        // 字符编码
+        jstring charsetName = (*env)->NewStringUTF(env, "GB2312");
+
+        jstring js = (*env)->NewObject(env, str_cls, constructor_mid, bytes, charsetName);
+
+        return js;
+    }
