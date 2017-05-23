@@ -401,3 +401,149 @@ native方法是非静态方法，native方法所属的对象
         }
         
     }    
+
+调用构造方法
+
+    // 使用java.util.Date产生时间戳
+    JNIEXPORT jobject JNICALL Java_com_zcycn_jni_JniTest_accessConstructor
+    (JNIEnv *env, jobject jobj) {
+        jclass cls = (*env)->FindClass(env, "java/util/Date");
+        // <init> 构造函数
+        jmethodID constructor_mid = (*env)->GetMethodID(env, cls, "<init>", "()V");
+        // 实例化对象
+        jobject date_obj = (*env)->NewObject(env, cls, constructor_mid);
+        // 调用getTime
+        jmethodID mid = (*env)->GetMethodID(env, cls, "getTime", "()J");
+        jlong time = (*env)->CallLongMethod(env, date_obj, mid);
+        printf("time:%lld\n", time);
+        return date_obj;
+    }
+
+调用父类的方法
+
+    // 调用父类的方法
+    JNIEXPORT void JNICALL Java_com_zcycn_jni_JniTest_accessNonvirtualMethod
+    (JNIEnv *env, jobject jobj) {
+        // 获取man属性
+        jclass cls = (*env)->GetObjectClass(env, jobj);
+        jfieldID fid = (*env)->GetFieldID(env, cls, "human", "Lcom/zcycn/jni/Human;");
+        // 获取属性
+        jobject human_obj = (*env)->GetObjectField(env, jobj, fid);
+        // 执行方法  父类的名称
+        jclass human_cls = (*env)->FindClass(env, "com/zcycn/jni/Human");
+        jmethodID mid = (*env)->GetMethodID(env, human_cls, "sayHi", "()V");
+        // 调用的子类方法
+        (*env)->CallObjectMethod(env, human_obj, mid);
+        // 调用到父类的方法
+        (*env)->CallNonvirtualObjectMethod(env, human_obj, human_cls, mid);
+    }    
+
+中文乱码问题
+
+    // 传入中文
+    JNIEXPORT jstring JNICALL Java_com_zcycn_jni_JniTest_chineseChars
+    (JNIEnv *env, jobject jobj, jstring in) {
+        char *c_str = (*env)->GetStringUTFChars(env, in, JNI_FALSE);
+        printf("%s\n", c_str);// 这里会由乱码
+
+        char *cstr = "你好啊";
+        //jstring jstr = (*env)->NewStringUTF(env, cstr);
+
+        // 避免乱码
+        jclass str_cls = (*env)->FindClass(env, "java/lang/String");
+        jmethodID constructor_mid = (*env)->GetMethodID(env, str_cls, "<init>", "([BLjava/lang/String;)V");
+        
+        // jbyte -> char  复制数据到bytes jbyteArray -> char[]
+        jbyteArray bytes = (*env)->NewByteArray(env, strlen(cstr));
+        (*env)->SetByteArrayRegion(env, bytes, 0, strlen(cstr), cstr);
+
+        // 字符编码
+        jstring charsetName = (*env)->NewStringUTF(env, "GB2312");
+
+        jstring js = (*env)->NewObject(env, str_cls, constructor_mid, bytes, charsetName);
+
+        return js;
+    }
+
+    public class JniTest {
+
+        public native static String getStringFromC();
+        
+        public native String getString2FromC();
+        
+        public String key = "hello";
+        
+        /**
+        * 返回修改后的属性内容
+        * @return
+        */
+        public native String accessField();
+        
+        public static int count = 9;
+        
+        public native void accessStaticField();
+        
+        public native void accessMethod();
+        
+        public native void accessStaticMethod();
+        
+        public native Date accessConstructor();
+        
+        public Human human = new Man();
+        
+        public native void accessNonvirtualMethod();
+        
+        public native String chineseChars(String in);
+        
+        public static void main(String[] args) {
+            System.out.println(getStringFromC());
+            
+            JniTest j = new JniTest();
+            System.out.println(j.getString2FromC());
+            System.out.println("key:修改前："+j.key);
+            System.out.println(j.accessField());
+            System.out.println("key:修改后："+j.key);
+            
+            System.out.println("count修改前："+count);
+            j.accessStaticField();
+            System.out.println("count修改后："+count);
+            
+            j.accessMethod();
+            
+            j.accessStaticMethod();
+            
+            j.accessConstructor();
+            
+            j.accessNonvirtualMethod();
+            
+            // 这里无法调用父类的方法，在jni中可以
+            j.human.sayHi();
+            
+            System.out.println(j.chineseChars("你好，中国"));
+        }
+        
+        /**
+        * 获取一个设置最大值的随机数
+        * @param max
+        * @return
+        */
+        public int getRandomInt(int max){
+            System.out.println("getRandomInt");
+            return new Random().nextInt(max);
+        }
+        
+        /**
+        * 获取UUID
+        * @return
+        */
+        public static String getUUID(){
+            return UUID.randomUUID().toString();
+        }
+        
+        
+        // 加载动态库
+        static{
+            System.loadLibrary("jni_study");
+        }
+        
+    }    
