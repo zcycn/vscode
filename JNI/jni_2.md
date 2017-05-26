@@ -171,3 +171,42 @@ JNI自己抛出的异常无法被java层捕获
             (*env)->ThrowNew(env, newExcCls, "keys is invalid");
         }
     }
+
+### 缓存策略
+
+如果jni中一个函数经常调用，那么一些变量就可以写出局部静态变量，多次使用，但这个局部变量在函数执行完变量虽然销毁，但值还在内存中
+
+    // 缓存策略
+    JNIEXPORT void JNICALL Java_com_zcycn_jni_JniTest_cached
+    (JNIEnv *env, jobject jobj) {
+        jclass cls = (*env)->GetObjectClass(env, jobj);
+        
+        // 只获取一次
+        // 局部静态变量，作用域销毁，但值还在内存中
+        static jfieldID key_id = NULL;
+        if (key_id == NULL) {
+            key_id = (*env)->GetFieldID(env, cls, "key", "Ljava/lang/String;");
+            printf("------GetFieldID-----\n");
+        }
+    }
+
+### jni加载时初始化
+
+    // 加载动态库
+	static{
+		System.loadLibrary("jni_study");
+		initIds();
+	}
+
+    public static native void initIds();
+
+    那么c中可以如下写法
+
+    // 全局初始化，动态库加载完立即缓存
+    jfieldID key_fid;
+    jmethodID random_mid;
+    JNIEXPORT void JNICALL Java_com_zcycn_jni_JniTest_initIds
+    (JNIEnv *env, jclass jcls) {
+        key_fid = (*env)->GetFieldID(env, jcls, "key", "Ljava/lang/String;");
+        random_mid = (*env)->GetMethodID(env, jcls, "genRandomInt", "(I)I");
+    }
