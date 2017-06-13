@@ -22,7 +22,7 @@
                 src/main/cpp/web_task.cpp
                 src/main/cpp/native-lib.cpp )
 
-    # 第三方库使用到的头文件
+    # 第三方库使用到的头文件 这里是头文件的目录，不是具体文件
     include_directories(
                         src/main/cpp/include/jsoncpp
                         src/main/cpp/include/curl)
@@ -72,6 +72,7 @@
 
                         # Links the target library to the log library
                         # included in the NDK.
+                        # 引用的so a等库也要在这里添加，才能调用到
                         jsoncpp
                         curl
                         ${log-lib} )
@@ -135,9 +136,9 @@
     表示只需要导入，不需要构建so库。       
 
     set_target_properties(
-                        imported-lib // so库的名称
-                        PROPERTIES IMPORTED_LOCATION // import so库
-                        libs/libimported-lib.so // so库路径
+                        imported-lib // so库的名称  
+                        PROPERTIES IMPORTED_LOCATION // import so库  
+                        libs/libimported-lib.so // so库路径  
     )    
 
-> 当使用已经存在so库时，不应该配置target_link_libraries()方法，因为只有在build 库文件时才能进行link操作。     
+> ~~当使用已经存在so库时，不应该配置target_link_libraries()方法，因为只有在build 库文件时才能进行link操作。~~有误     
