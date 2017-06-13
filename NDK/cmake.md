@@ -141,4 +141,4 @@
                         libs/libimported-lib.so // so库路径  
     )    
 
-> ~~当使用已经存在so库时，不应该配置target_link_libraries()方法，因为只有在build 库文件时才能进行link操作。~~有误     
+> ~~当使用已经存在so库时，不应该配置target_link_libraries()方法，因为只有在build 库文件时才能进行link操作。~~  错误    
