@@ -77,3 +77,16 @@
 
 > 效果同上  
     
+### LinearLayoutCompat
+
+    <android.support.v7.widget.LinearLayoutCompat
+        app:divider="@drawable/abc_list_divider_mtrl_alpha"
+        app:showDividers="middle"
+        >
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+> 效果是在每个控件加间隔线
+
+### RecyclerView
+
