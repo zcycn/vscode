@@ -1,3 +1,7 @@
+### DP的说明
+每英寸点数称为密度DPI，规定密度DPI为160时密度为1，那么任意屏幕可以通过像素点个数/160可计算出密度  
+px = dp x 密度  
+
 ### 主题样式
 - android:windowBackgroud  全局背景  
 - android:navigationBarColor  back/home/menu导航栏背景，5.0以上
