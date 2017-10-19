@@ -17,6 +17,14 @@
   
 2. 揭露 Reveal Effect  
 
+        // 设置一个控件的揭露效果
+        // 圆形水波纹效果  中心点 开始半径 结束半径
+        Animator animator = ViewAnimationUtils.createCircularReveal(v, v.getWidth()/2, v.getHeight()/2, 0, v.getHeight()/2);
+        // 勾股定理 Math.hypot()
+        animator.setDuration(1000);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.start();
+
 3. Activity转场动画 Activity transition  
 
 4. Curved motion 曲线运动  
