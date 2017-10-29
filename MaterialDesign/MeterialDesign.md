@@ -27,7 +27,78 @@
 
 3. Activity转场动画 Activity transition  
 
+   ActivityOptions只支持API21以上  
+   ActivityOptionsCompat兼容类，在低版本没有效果  
+   共享元素转换  
+
+   - 设置允许转场，有两种方式，代码或style  
+
+          getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);  
+
+          <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+          <!-- Customize your theme here. -->
+          <item name="colorPrimary">@color/colorPrimary</item>
+          <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+          <item name="colorAccent">@color/colorAccent</item>
+          <item name="colorControlHighlight">@color/colorAccent</item>
+          <item name="colorButtonNormal">@color/colorPrimaryDark</item>
+          <item name="android:windowContentTransitions">true</item>
+          </style>
+
+   - 设置共享元素和共享元素名称   
+
+      共享元素不需要相同的View类型，共享元素的名称要相同  
+
+        例如ActivityA中  
+
+          <TextView
+            android:id="@+id/textView"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:transitionName="@string/app_name"
+            android:background="@color/colorAccent"
+            android:text="TextView"/>
+
+        那么ActivityB中可以  
+
+          <Button
+            android:id="@+id/textView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:transitionName="@string/app_name"
+            android:background="@color/colorAccent"
+            android:text="TextView"/>
+
+    - ActivityOptionsCompat构建平移动画  
+
+          // Activity A中的代码  
+          ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                  this // 当前Activity
+                  , view // 共享元素
+                  , "MaterialDesign");// 共享元素名称
+          Intent intent = new Intent(this, SecondActivity.class);
+          startActivity(intent, options.toBundle());           
+
+          // 多个元素共享的情况
+          ActivityOptionsCompat options2 = ActivityOptionsCompat.makeSceneTransitionAnimation(
+          this // 当前Activity
+          , Pair.create(view, "MaterialDesign")
+          , Pair.create(button, "button"));// 共享元素名称
+
+          // 按返回键的时候自动实现了返回的共享元素转场动画，源码可以看出：
+          public void onBackPressed() {
+            finishAfterTransition();
+          }
+          public void finishAfterTransition() {
+            if (!mActivityTransitionState.startExitBackTransition(this)) {
+                finish();
+            }
+          }
+
 4. Curved motion 曲线运动  
+
+    插值器Interpolator
+
 
 5. 视图状态改变 View State change  
 
