@@ -95,6 +95,44 @@
             }
           }
 
+    - 普通转换动画  
+    如果有共享元素的转换则以共享元素的动画执行，其他的View按下面设置的动画  
+        
+        // 滑动
+        Slide slide = new Slide();
+        slide.setDuration(1000);
+        getWindow().setExitTransition(slide);// 出去
+        getWindow().setEnterTransition(slide);// 进入
+
+        // 展开
+        Explode explode = new Explode();
+        explode.setDuration(1000);
+
+        // 渐变
+        Fade fade = new Fade();
+        fade.setDuration(1000);
+
+        ActivityOptionsCompat options3 = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+        Intent intent = new Intent(this, SecondActivity.class);
+        startActivity(intent, options3.toBundle());
+
+        // 第二个Activity
+
+        Slide slide = new Slide();
+        slide.setDuration(1000);
+        getWindow().setEnterTransition(slide);
+        getWindow().setExitTransition(slide);
+
+        findViewById(R.id.textView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finishAfterTransition();// 这个才会有动画
+                //onBackPressed();// 或者这个
+            }
+        });
+
+        // RevealBackgroundView效果后面补充
+
 4. Curved motion 曲线运动  
 
     插值器Interpolator
