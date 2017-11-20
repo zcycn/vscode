@@ -22,7 +22,7 @@
         }
 
 1. ViewGroup重写了View的dispatchTouchEvent方法  
-2. 在DOWN事件或首个目标对象不为null时会判断是否拦截      
+2. 在DOWN事件或首个触摸对象不为null时会判断是否拦截      
 3. disallowIntercept当子View设置了不需要拦截为true时，ViewGroup则不会拦截  
 4. onInterceptTouchEvent方法返回是否拦截自己处理事件     
 
@@ -86,7 +86,7 @@
         }
 
 1. 如果不拦截，则会执行上面的for循环找到可以处理事件的子View后退出循环   
-2. 通过dispatchTransformedTouchEvent(ev, false, child, idBitsToAssign)分发给子View，
+2. 通过dispatchTransformedTouchEvent(ev, false, child, idBitsToAssign)分发给子View
 
         private boolean dispatchTransformedTouchEvent(MotionEvent event, boolean cancel,
                 View child, int desiredPointerIdBits) {
@@ -108,3 +108,75 @@
 
 1. 如果子View为null，则调用自己的dispatchTouchEvent，也就是View的dispatchTouchEvent  
 
+        ...
+        // Find a child that can receive the event.
+        // Scan children from front to back.
+        final ArrayList<View> preorderedList = buildTouchDispatchChildList();
+        final boolean customOrder = preorderedList == null
+                && isChildrenDrawingOrderEnabled();
+        final View[] children = mChildren;
+        for (int i = childrenCount - 1; i >= 0; i--) {
+            ...
+
+1. 当手指按下时所处坐标下有多层View时，会先响应最上层View  
+
+        newTouchTarget = addTouchTarget(child, idBitsToAssign);
+        alreadyDispatchedToNewTouchTarget = true;          
+
+1. 当找到一个触摸对象时会添加到一个单向链表中，这时候mFirstTouchTarget就不会为null  
+
+        // Dispatch to touch targets.
+        if (mFirstTouchTarget == null) {
+            // No touch targets so treat this as an ordinary view.
+            handled = dispatchTransformedTouchEvent(ev, canceled, null,
+                    TouchTarget.ALL_POINTER_IDS);
+        } else {
+            // Dispatch to touch targets, excluding the new touch target if we already
+            // dispatched to it.  Cancel touch targets if necessary.
+            TouchTarget predecessor = null;
+            TouchTarget target = mFirstTouchTarget;
+            while (target != null) {
+                final TouchTarget next = target.next;
+                if (alreadyDispatchedToNewTouchTarget && target == newTouchTarget) {
+                    handled = true;
+                } else {
+                    final boolean cancelChild = resetCancelNextUpFlag(target.child)
+                            || intercepted;
+                    if (dispatchTransformedTouchEvent(ev, cancelChild,
+                            target.child, target.pointerIdBits)) {
+                        handled = true;
+                    }
+                    if (cancelChild) {
+                        if (predecessor == null) {
+                            mFirstTouchTarget = next;
+                        } else {
+                            predecessor.next = next;
+                        }
+                        target.recycle();
+                        target = next;
+                        continue;
+                    }
+                }
+                predecessor = target;
+                target = next;
+            }
+        }
+
+1. mFirstTouchTarget这个为null时会给View赋值为null，这样事件会调用super.dispatchTouchEvent分发给自己  
+2. dispatchTransformedTouchEvent(ev, cancelChild, target.child, target.pointerIdBits)分发给子View  
+3. mFirstTouchTarget的意义在于一旦一个View消费了DOWN事件，那么该系列的后续事件都由该View处理
+    所以在alreadyDispatchedToNewTouchTarget = true;时消耗了Down事件，因此不会执行  
+
+        if (alreadyDispatchedToNewTouchTarget && target == newTouchTarget) {
+                            handled = true;
+        } else {
+            // 这个逻辑不会执行
+        }
+
+    当ACTION_MOVE事件过来时，alreadyDispatchedToNewTouchTarget 表示是否是新添加TouchTarget的，这个在上一个事件DOWN的时候是被置为true，但是在这次事件中由于没有添加新的TouchTarget，所以为false。这是就会执行else逻辑进行事件分发  
+
+    这里的target.child就是mFirstTouchTarget中持有的View，在这里就是ViewGroup B。所以通过dispatchTransformedTouchEvent我们知道这里将当前事件ACTION_MOVE传给了B的dispatchTouchEvent方法。
+
+    总的来说就是通过mFirstTouchTarget保存DOWN事件的消费View B，然后在后续的事件直接传给了B的dispatchTouchEvent处理。
+
+参考：http://blog.csdn.net/sinat_23092639/article/details/74858558    
