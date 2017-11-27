@@ -96,4 +96,4 @@
 
 1. MotionEvent.ACTION_UP事件中调用onClick方法，result设为true  
 
-                     
+ViewGroup                     
