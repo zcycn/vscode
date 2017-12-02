@@ -105,4 +105,14 @@
 
 ### ListView在ScrollView展开  
 
-               
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            // TODO Auto-generated method stub
+    //		int size = MeasureSpec.getSize(heightMeasureSpec);
+    //		int mode = MeasureSpec.getMode(heightMeasureSpec);
+            
+            int expandedHeihgt = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE>>2, MeasureSpec.AT_MOST);
+            
+            super.onMeasure(widthMeasureSpec, expandedHeihgt);
+    //		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        }               
