@@ -96,4 +96,13 @@
 
 1. MotionEvent.ACTION_UP事件中调用onClick方法，result设为true  
 
-ViewGroup                     
+### ScrollView与ListView事件冲突  
+
+继承ScrollView重写dispatchTouchEvent方法
+
+        requestDisallowInterceptTouchEvent(true);// 不拦截
+        return super.dispatchTouchEvent(ev);           
+
+### ListView在ScrollView展开  
+
+               
