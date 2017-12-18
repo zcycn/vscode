@@ -112,4 +112,54 @@
 
 6. 测量子View的方法：measureChild 包含了padding，measureChildWithMargins 包含了padding和margin  
 
+### 测量的套路 
 
+        // 获取父View传递的测量规格
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int width = 0;
+        int height = 0;
+
+        // 获取子View测量规格，测量每个子View
+        int childCount = getChildCount();
+        for (int i=0; i<childCount; i++) {
+            View child = getChildAt(i);
+            ViewGroup.LayoutParams lp = child.getLayoutParams();
+            int childWidthSpec = getChildMeasureSpec(widthMeasureSpec, 0, lp.width);
+            int childHeightSpec = getChildMeasureSpec(heightMeasureSpec, 0, lp.height);
+            child.measure(childWidthSpec, childHeightSpec);
+        }
+
+        // 根据子View确定自身宽高
+        switch (widthMode) {
+            case MeasureSpec.EXACTLY:
+                width = widthSize;
+                break;
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.UNSPECIFIED:
+                for (int i=0; i<childCount; i++) {
+                    View child = getChildAt(i);
+                    int widthAndOffset = i * offset + child.getMeasuredWidth();
+                    width = Math.max(width, widthAndOffset);
+                }
+                break;
+        }
+
+        switch (heightMode) {
+            case MeasureSpec.EXACTLY:
+                height = heightSize;
+                break;
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.UNSPECIFIED:
+                for (int i=0; i<childCount; i++) {
+                    View child = getChildAt(i);
+                    height = height + child.getMeasuredHeight();
+                }
+                break;
+        }
+
+        // 设置自身宽高
+        setMeasuredDimension(width, height);
