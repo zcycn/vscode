@@ -18,7 +18,7 @@
 
 1. 查找到指定布局
 
-    private static ViewGroup findSuitableParent(View view) {
+        private static ViewGroup findSuitableParent(View view) {
             ViewGroup fallback = null;
             do {
                 if (view instanceof CoordinatorLayout) {
