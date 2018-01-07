@@ -1,0 +1,22 @@
+package com.zcycn.test;
+
+/*
+ * 建造者模式：构建与表示进行分离
+ * 角色：抽象建造者
+ * 		具体建造者
+ * 		设计者  指挥建造者生成产品
+ * 		产品
+ */
+public class Test {
+	
+	public static void main(String[] args) {
+		Request1 r1 = new Request1();
+		Handler1 h1 = new Handler1();
+		Handler1 h2 = new Handler1();
+		Handler1 h3 = new Handler1();
+		h1.nextHandler = h2;
+		h2.nextHandler = h3;
+		h1.handRequest(r1);
+	}
+	
+}
