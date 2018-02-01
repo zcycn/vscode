@@ -172,3 +172,135 @@ I/System.out: ===========================onNext
                 }
             };
         }
+
+
+### 多数据来源处理concat+first
+
+- 可以实现多数据来源时，有一方返回数据即停止，执行是按参数顺序进行  
+- rxjava1和2是有区别的，只有调用了onComplete才会执行下一个来源数据，只要调用了onNext就不会再执行后面的数据
+- 另外异常如果不能捕获，那么整个数据获取就失败了，不会进入下一个
+
+        public static void testConcat() {
+            //final String[] data = {null, null, "network"};
+            final String[] data = {"memory", "disk", "network"};
+            Observable<String> memorySource = Observable.create(new ObservableOnSubscribe<String>() {
+                @Override
+                public void subscribe(ObservableEmitter<String> subscriber) throws Exception{
+                    System.out.println("===========1 ");
+                    String d = data[0];
+                    SystemClock.sleep(1000);
+                    data[4] = "11"; // 模拟出错
+                    if (d != null) {
+                        System.out.println("===========1 onNext");
+                        subscriber.onNext(d); // 有onNext不会进入下一轮
+                    }
+                    System.out.println("===========1 onCompleted");
+                    subscriber.onComplete(); // 没有completed不会进入下一轮
+                }
+            }).subscribeOn(Schedulers.io());
+            Observable<String> diskSource = Observable.create(new ObservableOnSubscribe<String>() {
+                @Override
+                public void subscribe(ObservableEmitter<String> subscriber) {
+                    System.out.println("===========2 ");
+                    String d = data[1];
+                    SystemClock.sleep(1000);
+                    if (d != null) {
+                        System.out.println("===========2 onNext");
+                        subscriber.onNext(d);
+                    }
+                    System.out.println("===========2 onCompleted");
+                    subscriber.onComplete();
+                }
+            }).subscribeOn(Schedulers.io());
+            Observable<String> networkSource = Observable.create(new ObservableOnSubscribe<String>() {
+                @Override
+                public void subscribe(ObservableEmitter<String> subscriber) {
+                    System.out.println("===========3 ");
+                    String d = data[2];
+                    if (d != null) {
+                        System.out.println("===========3 onNext");
+                        subscriber.onNext(d);
+                    }
+                    System.out.println("===========3 onCompleted");
+                    subscriber.onComplete();
+                }
+            }).subscribeOn(Schedulers.io());
+            Observable.concat(memorySource, diskSource, networkSource)
+                    .firstElement()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(String s) throws Exception {
+                            System.out.println("Getting data from " + s);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            throwable.printStackTrace();
+                            System.out.println("Error: " + throwable.getMessage());
+                        }
+                    });
+        }
+
+
+        public static void testConcat() {
+            final String[] data = {null, null, "network"};
+            // final String[] data = {"memory", "disk", "network"};
+            Observable<String> memorySource = Observable.create(new Observable.OnSubscribe<String>() {
+                @Override
+                public void call(Subscriber<? super String> subscriber) {
+                    System.out.println("===========1 ");
+                    String d = data[0];
+                    SystemClock.sleep(1000);
+                    // data[4] = "11"; 模拟出错
+                    if (d != null) {
+                        System.out.println("===========1 onNext");
+                        subscriber.onNext(d); // 有onNext不会进入下一轮
+                    }
+                    System.out.println("===========1 onCompleted");
+                    subscriber.onCompleted(); // 没有completed不会进入下一轮
+                }
+            }).subscribeOn(Schedulers.io());
+            Observable<String> diskSource = Observable.create(new Observable.OnSubscribe<String>() {
+                @Override
+                public void call(Subscriber<? super String> subscriber) {
+                    System.out.println("===========2 ");
+                    String d = data[1];
+                    SystemClock.sleep(1000);
+                    if (d != null) {
+                        System.out.println("===========2 onNext");
+                        subscriber.onNext(d);
+                    }
+                    System.out.println("===========2 onCompleted");
+                    subscriber.onCompleted();
+                }
+            }).subscribeOn(Schedulers.io());
+            Observable<String> networkSource = Observable.create(new Observable.OnSubscribe<String>() {
+                @Override
+                public void call(Subscriber<? super String> subscriber) {
+                    System.out.println("===========3 ");
+                    String d = data[2];
+                    if (d != null) {
+                        System.out.println("===========3 onNext");
+                        subscriber.onNext(d);
+                    }
+                    System.out.println("===========3 onCompleted");
+                    subscriber.onCompleted();
+                }
+            }).subscribeOn(Schedulers.io());
+            Observable.concat(memorySource, diskSource, networkSource)
+                    .first()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<String>() {
+                        @Override
+                        public void call(String s) {
+                            System.out.println("Getting data from " + s);
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            throwable.printStackTrace();
+                            System.out.println("Error: " + throwable.getMessage());
+                        }
+                    });
+        }
