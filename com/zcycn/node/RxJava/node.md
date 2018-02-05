@@ -304,3 +304,50 @@ I/System.out: ===========================onNext
                         }
                     });
         }
+
+### 取消订阅错误捕获
+
+        RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                LogUtil.i("RxJavaPlugins error :", throwable);
+            }
+        });        
+
+
+### 轮询任务异常处理
+
+        Observable.interval(MagicNumberConstant.FIVE, TimeUnit.SECONDS, Schedulers.io()).flatMap(new Function<Long, ObservableSource<NetEaseSongListResult>>() {
+
+            @Override
+            public ObservableSource<NetEaseSongListResult> apply(Long aLong) throws Exception {
+                return mFavoriteModel.getNetEaseSongList(mContext, mMainActivity.getIUserAccountService(), 0, false).delaySubscription(MagicNumberConstant.ONE_HUNDRED, TimeUnit.MILLISECONDS).
+                    /*doOnError(new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            System.out.println("====================111");
+                        }
+                    }).*/onErrorReturn(new Function<Throwable, NetEaseSongListResult>() {
+                        @Override
+                        public NetEaseSongListResult apply(Throwable throwable) throws Exception {
+                            System.out.println("====================222");
+                            return new NetEaseSongListResult();
+                        }
+                });
+            }
+        }).subscribe(new FavObserver<NetEaseSongListResult>(){
+            @Override
+            public void onNext(NetEaseSongListResult netEaseSongListResult) {
+                System.out.println("===========================3333");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                System.out.println("==========================4444");
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("===========================555");
+            }
+        });        
