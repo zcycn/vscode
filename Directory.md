@@ -1,1 +1,1 @@
-1、ViewStub是否加载过 ------ Knowledge points/points.md
+1. (https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/points.md "1、ViewStub是否加载过") 
