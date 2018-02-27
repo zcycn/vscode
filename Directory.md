@@ -1,1 +1,1 @@
-1. (https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/points.md "1、ViewStub是否加载过") 
+1. [ViewStub是否加载过](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/points.md) 
