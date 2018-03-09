@@ -2,3 +2,4 @@
 2. [Application前后台切换](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/application.md)   
 3. [Java线程](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/juc.md) 
 3. [JavaNIO](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/nio.md) 
+4. [NDK创建子进程](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/ndk_guardian.md) 
