@@ -5,3 +5,4 @@
 5. [NDK创建子进程](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/ndk_guardian.md)  
 6. [MVP简单例子](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/mvc.md)  
 7. [指针与内存动态分配](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/pointer.md)  
+8. [结构体与指针](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/struct.md)  
