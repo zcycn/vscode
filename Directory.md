@@ -7,3 +7,4 @@
 7. [指针与内存动态分配](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/pointer.md)  
 8. [结构体与指针](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/struct.md)  
 9. [IO与文件加解密](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/c_io.md)  
+9. [JNI调用步骤](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_steps.md)  
