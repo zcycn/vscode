@@ -9,3 +9,5 @@
 9. [IO与文件加解密](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/c_io.md)  
 10. [JNI调用步骤](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_steps.md)  
 11. [C调用Java属性与方法](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_field_method.md)  
+12. [C调用Java构造方法](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_constructor.md)  
+13. [JNI获取和创建数组](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_array.md)  
