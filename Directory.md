@@ -11,3 +11,5 @@
 11. [C调用Java属性与方法](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_field_method.md)  
 12. [C调用Java构造方法](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_constructor.md)  
 13. [JNI获取和创建数组](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_array.md)  
+14. [JNI引用与异常处理](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_ref_exception.md)  
+15. [JNI缓存策略](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_ref_cache.md)  
