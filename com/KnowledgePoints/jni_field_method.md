@@ -44,8 +44,14 @@ C
             jfieldID fid = (*env)->GetFieldID(env, cls, "key", "Ljava/lang/String;");
             // 获取对象属性值
             jstring jstr = (*env)->GetObjectField(env, jobj, fid);
-            // jstring转c字符串，isCopy
-            char* c_str = (*env)->GetStringUTFChars(env, jstr, JNI_FALSE);
+            // jstring转c字符串，isCopy  jboolean指针
+            // jboolean isCopy = NULL;
+            // const char* normal_path = (*env)->GetStringUTFChars(env, path_jstr, &isCopy);
+            // 内部复制了icCopy为JNI_TRUE，没有复制为JNI_FALSE
+            // if(isCopy){
+            //     
+            // }
+            char* c_str = (*env)->GetStringUTFChars(env, jstr, NULL);
             // 修改字符串
             char text[20] = "super ";
             strcat(text, c_str);// 拼接字符串

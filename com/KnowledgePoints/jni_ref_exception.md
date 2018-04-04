@@ -70,7 +70,7 @@
 
 ### 异常处理  
 
-- JNI异常，Java无法直接捕获，并且结束运行  
+- JNI异常，Throwable捕获异常，不捕获那么停止运行  
 - JNI中进行异常检测，通过ExceptionClear方法，可以让Java继续运行  
 - JNI中异常，如果Java中需要捕获，就要通过ThrowNew函数创建异常  
 

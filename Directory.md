@@ -13,3 +13,4 @@
 13. [JNI获取和创建数组](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_array.md)  
 14. [JNI引用与异常处理](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_ref_exception.md)  
 15. [JNI缓存策略](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_ref_cache.md)  
+15. [命名空间与引用](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/namespace.md)  
