@@ -15,3 +15,5 @@
 15. [JNI缓存策略](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/jni_ref_cache.md)  
 16. [命名空间与引用](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/namespace.md)  
 17. [构造函数](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/c++_func.md)  
+18. [友元函数](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/cpp_friend.md)  
+19. [覆盖](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/cpp_extend.md)  
