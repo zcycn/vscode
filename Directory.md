@@ -19,3 +19,5 @@
 19. [覆盖](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/cpp_extend.md)  
 20. [虚函数与模板函数](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/cpp_virtual.md)  
 21. [CMAKE使用示例](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/fmod.md)  
+22. [C++异常捕获与类型转换](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/cpp_exception.md)  
+23. [C++IO与标准模板库](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/cpp_io_stl.md)  
