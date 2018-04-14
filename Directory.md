@@ -21,3 +21,4 @@
 21. [CMAKE使用示例](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/fmod.md)  
 22. [C++异常捕获与类型转换](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/cpp_exception.md)  
 23. [C++IO与标准模板库](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/cpp_io_stl.md)  
+24. [FFmpeg编译环境](https://github.com/zcycn/vscode/blob/master/com/KnowledgePoints/ffmpeg_base.md)  
